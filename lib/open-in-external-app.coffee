@@ -41,10 +41,17 @@ module.exports = OpenInExternalApp =
 
   toggle: ->
     if @modalPanel.isVisible()
-      @modalPanel.hide()
+      @cancel()
     else
-      @modalPanel.show()
-      @view.inputView.focus()
+      @show()
+
+  show: ->
+    @previousFocusedElement = document.activeElement
+    @modalPanel.show()
+    @view.inputView.focus()
 
   cancel: ->
     @modalPanel.hide() if @modalPanel.isVisible()
+    if @previousFocusedElement
+      atom.views.getView(@previousFocusedElement).focus()
+      @previousFocusedElement = null
