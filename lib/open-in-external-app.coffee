@@ -27,6 +27,11 @@ module.exports = OpenInExternalApp =
     @subscriptions.add atom.commands.add 'atom-workspace',
       'open-in-external-app:toggle': => @toggle()
 
+    @subscriptions.add atom.commands.add @view.element,
+      'core:cancel': (event) =>
+        @cancel()
+        event.stopPropagation()
+
   deactivate: ->
     @modalPanel.destroy()
     @subscriptions.dispose()
@@ -40,3 +45,6 @@ module.exports = OpenInExternalApp =
     else
       @modalPanel.show()
       @view.inputView.focus()
+
+  cancel: ->
+    @modalPanel.hide() if @modalPanel.isVisible()
