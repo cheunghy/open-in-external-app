@@ -26,8 +26,6 @@ module.exports = OpenInExternalApp =
     # Register command that toggles this view
     @subscriptions.add atom.commands.add 'atom-workspace',
       'open-in-external-app:toggle': => @toggle()
-    @subscriptions.add atom.commands.add 'atom-workspace',
-      'open-in-external-app:open': => @open()
 
   deactivate: ->
     @modalPanel.destroy()
@@ -39,9 +37,6 @@ module.exports = OpenInExternalApp =
   toggle: ->
     if @modalPanel.isVisible()
       @modalPanel.hide()
-      @modalPanel.visible = false
     else
       @modalPanel.show()
-      @modalPanel.visible = true
-
-  open: ->
+      @view.inputView.focus()

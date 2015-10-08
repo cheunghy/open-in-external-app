@@ -1,4 +1,5 @@
 _ = require 'underscore-plus'
+{TextEditor} = require 'atom'
 
 module.exports =
 class OpenInExternalAppView
@@ -6,9 +7,15 @@ class OpenInExternalAppView
     # Create root element
     @element = document.createElement('div')
     @element.classList.add('open-in-external-app')
-
+    # Create input view
+    @installInput()
     # Create list elements
     @installLists(config)
+
+  installInput: () ->
+    @inputEditor = new TextEditor({mini: true, placeholderText:"test"})
+    @inputView = atom.views.getView(@inputEditor)
+    @element.appendChild(@inputView)
 
   installLists: (config) ->
     lines = _.keys(config).map (k) -> "#{k} : #{config[k]}<br>"
