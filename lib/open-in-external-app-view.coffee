@@ -18,7 +18,7 @@ class OpenInExternalAppView
     @element.appendChild(@inputView)
 
   installLists: (config) ->
-    lines = _.keys(config).map (k) -> "#{k} : #{config[k]}<br>"
+    lines = _.keys(config).map (k) -> "#{k.toUpperCase()} : #{config[k]}<br>"
     content = lines.join('')
 
     appsList = document.createElement('div')

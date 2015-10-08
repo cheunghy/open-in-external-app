@@ -1,5 +1,6 @@
 OpenInExternalAppView = require './open-in-external-app-view'
 {CompositeDisposable} = require 'atom'
+open = require 'open'
 _ = require('underscore-plus')
 
 module.exports = OpenInExternalApp =
@@ -31,11 +32,28 @@ module.exports = OpenInExternalApp =
       'core:cancel': (event) =>
         @cancel()
         event.stopPropagation()
+    # Execute the open
+    @subscriptions.add @view.inputEditor.onDidChange => @maybeOpen()
+    @konfig = config
 
   deactivate: ->
     @modalPanel.destroy()
     @subscriptions.dispose()
     @view.destroy()
+
+  maybeOpen: () ->
+    text = @view.inputEditor.getText()
+    return if text == ''
+    if _.contains(_.keys(@konfig), text)
+      @open(@konfig[text])
+    else
+      @view.inputEditor.setText('')
+
+  open: (app) ->
+    uri = atom.workspace.getActivePaneItem()?.getPath?()
+    if uri
+      open(uri, app)
+      @cancel()
 
   serialize: ->
 
@@ -48,6 +66,7 @@ module.exports = OpenInExternalApp =
   show: ->
     @previousFocusedElement = document.activeElement
     @modalPanel.show()
+    @view.inputEditor.setText('')
     @view.inputView.focus()
 
   cancel: ->
