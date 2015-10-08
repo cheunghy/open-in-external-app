@@ -19,6 +19,7 @@
     "open": ">=0.0.5",
     "path": "*",
     "fs": "*",
+    "underscore-plus": "*"
   },
   "author": {
     "name": "Zhang Kai Yu",

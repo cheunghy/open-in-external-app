@@ -1,15 +1,23 @@
+_ = require 'underscore-plus'
+
 module.exports =
 class OpenInExternalAppView
-  constructor: (serializedState) ->
+  constructor: (config={}, serializedState) ->
     # Create root element
     @element = document.createElement('div')
     @element.classList.add('open-in-external-app')
 
-    # Create message element
-    message = document.createElement('div')
-    message.textContent = "The OpenInExternalApp package is Alive! It's ALIVE!"
-    message.classList.add('message')
-    @element.appendChild(message)
+    # Create list elements
+    @installLists(config)
+
+  installLists: (config) ->
+    lines = _.keys(config).map (k) -> "#{k} : #{config[k]}<br>"
+    content = lines.join('')
+
+    appsList = document.createElement('div')
+    appsList.insertAdjacentHTML('beforeend', content)
+    appsList.classList.add('apps-list')
+    @element.appendChild(appsList)
 
   # Returns an object that can be retrieved when package is activated
   serialize: ->

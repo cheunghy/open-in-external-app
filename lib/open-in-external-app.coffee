@@ -1,33 +1,47 @@
 OpenInExternalAppView = require './open-in-external-app-view'
 {CompositeDisposable} = require 'atom'
+_ = require('underscore-plus')
 
 module.exports = OpenInExternalApp =
-  openInExternalAppView: null
+  view: null
   modalPanel: null
   subscriptions: null
 
   activate: (state) ->
-    @openInExternalAppView = new OpenInExternalAppView(state.openInExternalAppViewState)
-    @modalPanel = atom.workspace.addModalPanel(item: @openInExternalAppView.getElement(), visible: false)
+    config = atom.config.get 'open-in-external-app'
+    unless config
+      config =
+        "e": "Emacs"
+        "s": "Sublime Text"
+        "t": "TextMate"
+        "f": "Finder"
+    @view = new OpenInExternalAppView(config, state)
 
-    # Events subscribed to in atom's system can be easily cleaned up with a CompositeDisposable
+    @modalPanel = atom.workspace.addModalPanel
+      item: @view.getElement()
+      visible: false
+
     @subscriptions = new CompositeDisposable
 
     # Register command that toggles this view
-    @subscriptions.add atom.commands.add 'atom-workspace', 'open-in-external-app:toggle': => @toggle()
+    @subscriptions.add atom.commands.add 'atom-workspace',
+      'open-in-external-app:toggle': => @toggle()
+    @subscriptions.add atom.commands.add 'atom-workspace',
+      'open-in-external-app:open': => @open()
 
   deactivate: ->
     @modalPanel.destroy()
     @subscriptions.dispose()
-    @openInExternalAppView.destroy()
+    @view.destroy()
 
   serialize: ->
-    openInExternalAppViewState: @openInExternalAppView.serialize()
 
   toggle: ->
-    console.log 'OpenInExternalApp was toggled!'
-
     if @modalPanel.isVisible()
       @modalPanel.hide()
+      @modalPanel.visible = false
     else
       @modalPanel.show()
+      @modalPanel.visible = true
+
+  open: ->
