@@ -52,7 +52,12 @@ module.exports = OpenInExternalApp =
   open: (app) ->
     uri = atom.workspace.getActivePaneItem()?.getPath?()
     if uri
-      open(uri, app)
+      open uri, app, (e, out, err) ->
+        if e
+          atom.notifications.addError "Cannot open with #{app}",
+            detail: out + err
+        else
+          atom.notifications.addSuccess("Opened with #{app}")
       @cancel()
 
   serialize: ->
